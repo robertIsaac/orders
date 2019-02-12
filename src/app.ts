@@ -23,7 +23,12 @@ const {
 } = process.env;
 validateEnv();
 app.set('env', process.env);
-mongoose.connect(`mongodb://${MONGO_USER}:${MONGO_PASSWORD}${MONGO_PATH}`, {useNewUrlParser: true});
+mongoose.set('useCreateIndex', true);
+let mongoCredentials = '';
+if (MONGO_USER && MONGO_PASSWORD) {
+    mongoCredentials = `${MONGO_USER}:${MONGO_PASSWORD}`;
+}
+mongoose.connect(`mongodb://${mongoCredentials}${MONGO_PATH}`, {useNewUrlParser: true});
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
