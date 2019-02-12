@@ -1,11 +1,12 @@
 import express = require("express");
 import UserModel from "../model/user.model";
+import {NextFunction, Request, Response} from "express-serve-static-core";
 
 const jwt = require('jsonwebtoken');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 
-function getJWTToken(user: User, req) {
+function getJWTToken(user: User, req: Request) {
     const env = req.app.get('env');
     const {JWT_SECRET} = env;
     return jwt.sign({
@@ -16,13 +17,36 @@ function getJWTToken(user: User, req) {
 
 /* GET users listing. */
 router.get("/", (req, res, next) => {
-    UserModel.find().then(posts => {
-        res.send(posts);
-        next();
-    })
+    const env = req.app.get('env');
+    const {JWT_SECRET} = env;
+    let token;
+    if (req.headers.authorization && typeof req.headers.authorization === 'string') {
+        token = req.headers.authorization.replace('Bearer ', '');
+    } else {
+        res.status(403).send('invalid token');
+        return;
+    }
+    let jwtBody;
+    try {
+        jwtBody = jwt.verify(token, JWT_SECRET, {expiresIn: '7d'});
+    } catch (e) {
+        console.log(e);
+        res.status(403).send('invalid token');
+        return;
+    }
+    UserModel.findOne({_id: jwtBody.id}).then(user => {
+        if (!user) {
+            res.status(403).send('invalid token');
+            return;
+        }
+        UserModel.find().then(posts => {
+            res.send(posts);
+            next();
+        })
+    });
 });
 
-function wrongCredentials(res, next) {
+function wrongCredentials(res: Response, next: NextFunction) {
     res.status(400).send({message: 'username or password is wrong'});
     next();
 }
