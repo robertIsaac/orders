@@ -4,6 +4,8 @@ import logger = require("morgan");
 import path = require("path");
 import indexRouter from "./routes";
 import usersRouter from "./routes/users";
+import ordersRouter from "./routes/orders";
+import restaurantsRouter from "./routes/restaurants";
 import 'dotenv/config';
 import validateEnv from './utils/validateEnv';
 import mongoose from 'mongoose';
@@ -32,5 +34,7 @@ mongoose.connect(`mongodb://${mongoCredentials}${MONGO_PATH}`, {useNewUrlParser:
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
+app.use("/orders", ordersRouter);
+app.use("/restaurants", restaurantsRouter);
 
 export = app;
