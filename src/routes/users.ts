@@ -1,6 +1,7 @@
 import express = require("express");
 import UserModel from "../model/user.model";
 import {NextFunction, Request, Response} from "express-serve-static-core";
+import {User} from "../interfaces/user.interface";
 
 const jwt = require('jsonwebtoken');
 const router = express.Router();
@@ -39,8 +40,39 @@ router.get("/", (req, res, next) => {
             res.status(403).send('invalid token');
             return;
         }
-        UserModel.find().then(posts => {
-            res.send(posts);
+        UserModel.find().then(users => {
+            res.send(users);
+            next();
+        })
+    });
+});
+
+/* GET user. */
+router.get("/:userId", (req, res, next) => {
+    const env = req.app.get('env');
+    const {JWT_SECRET} = env;
+    let token;
+    if (req.headers.authorization && typeof req.headers.authorization === 'string') {
+        token = req.headers.authorization.replace('Bearer ', '');
+    } else {
+        res.status(403).send('invalid token');
+        return;
+    }
+    let jwtBody;
+    try {
+        jwtBody = jwt.verify(token, JWT_SECRET, {expiresIn: '7d'});
+    } catch (e) {
+        console.log(e);
+        res.status(403).send('invalid token');
+        return;
+    }
+    UserModel.findOne({_id: jwtBody.id}).then(user => {
+        if (!user) {
+            res.status(403).send('invalid token');
+            return;
+        }
+        UserModel.findOne({_id: req.params.userId}).then(user => {
+            res.send(user);
             next();
         })
     });
