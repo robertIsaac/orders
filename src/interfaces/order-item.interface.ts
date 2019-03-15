@@ -1,7 +1,8 @@
 export interface OrderItem {
     _id?: string;
-    oderId: string;
+    orderId: string;
     itemId: string;
-    UserId: string;
+    userId: string;
     price: number;
+    quantity: number;
 }
