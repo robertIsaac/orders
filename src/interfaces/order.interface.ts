@@ -8,4 +8,5 @@ export interface Order {
     delivery: number;
     tax: number;
     time: Date;
+    tip?: number;
 }

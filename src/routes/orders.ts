@@ -44,13 +44,42 @@ router.post("/", (req, res, next) => {
             time: new Date,
         };
         new OrderModel(order).save().then(newOrder => {
-            res.json({id: newOrder._id});
+            res.status(201).json({id: newOrder._id});
             next();
         }).catch(error => {
             console.log(error);
             res.status(400).send('bad request');
             next();
         });
+    });
+});
+
+router.get("/:orderId", (req, res, next) => {
+    OrderModel.find({_id: req.params.orderId}).then(order => {
+        res.send(order[0]);
+        next();
+    }).catch((error) => {
+        console.error(error);
+        res.status(404).send({status: 404, message: 'not found'});
+        next();
+    })
+});
+
+router.patch("/:orderId", (req, res, next) => {
+    const allowed = ['status', 'tip'];
+    const editOrder: Partial<Order> = req.body;
+    for (let key in editOrder) {
+        if (!allowed.includes(key)) {
+            delete editOrder[key];
+        }
+    }
+    OrderModel.updateOne({_id: req.params.orderId}, editOrder).then(() => {
+        res.status(204).send(editOrder);
+        next();
+    }).catch((error) => {
+        console.error(error);
+        res.status(404).send({status: 404, message: 'not found'});
+        next();
     });
 });
 
@@ -68,10 +97,11 @@ router.get("/:orderId/items", (req, res, next) => {
  * add new item to an order
  * @param restaurantId {string} the id of the restaurant to order from
  * @param itemId {string} the id of the item to order
- * @return {string} orderItemId
+ * @return {string} the id of the created order item
  * */
 router.post("/:orderId/items", (req, res, next) => {
     ItemModel.findOne({_id: req.body.itemId}).then((item: Item | null) => {
+        // TODO get the user id from the JWT
         if (!item) {
             res.status(400).send(`no item found with id ${req.body.itemId}`);
             return;
@@ -84,7 +114,7 @@ router.post("/:orderId/items", (req, res, next) => {
             quantity: req.body.quantity,
         };
         new OrderItemModel(orderItem).save().then(newOrderItem => {
-            res.json({id: newOrderItem._id});
+            res.status(201).json({id: newOrderItem._id});
             next();
         }).catch(error => {
             console.log(error);
@@ -93,6 +123,5 @@ router.post("/:orderId/items", (req, res, next) => {
         });
     });
 });
-
 
 export = router;

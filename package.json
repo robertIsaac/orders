@@ -3,11 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www",
+    "start": "node ./build/bin/www",
     "dev": "ts-node-dev --respawn --transpileOnly ./src/bin/www.ts",
-    "prod": "tsc -w && cp -r public build/public || node ./build/bin/WWW",
-    "tsc": "cp -r public build/public && tsc -w ",
-    "build": "nodemon ./build/bin/WWW"
+    "build": "tsc"
   },
   "dependencies": {
     "@types/bcrypt": "^3.0.0",

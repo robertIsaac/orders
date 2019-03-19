@@ -35,7 +35,7 @@ router.post("/", (req, res, next) => {
         restaurant['menu'] = req.body.menu;
     }
     new RestaurantModel(restaurant).save().then((newRestaurant: Restaurant) => {
-        res.json({id: newRestaurant._id});
+        res.status(201).json({id: newRestaurant._id});
         next();
     }).catch(error => {
         console.log(error);
@@ -62,7 +62,7 @@ router.post("/:restaurantId/items/", (req, res, next) => {
         restaurantId: req.params.restaurantId,
     };
     new ItemModel(item).save().then((newItem: Item) => {
-        res.json({id: newItem._id});
+        res.status(201).json({id: newItem._id});
         next();
     }).catch(error => {
         console.log(error);
