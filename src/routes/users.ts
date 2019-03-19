@@ -110,7 +110,7 @@ router.post("/register", (req, res, next) => {
     const newUser = new UserModel(user);
     newUser.save().then(newUser => {
         const token = getJWTToken(newUser, req);
-        res.json({token: token});
+        res.status(201).json({token: token});
         next();
     }).catch(error => {
         console.log(error);

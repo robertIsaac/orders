@@ -36,6 +36,9 @@ const orderSchema = new Schema({
         type: Date,
         required: true,
     },
+    tip: {
+        type: Number
+    },
 });
 
 const OrderModel = mongoose.model<Order & mongoose.Document>('Order', orderSchema);
