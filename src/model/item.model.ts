@@ -17,7 +17,7 @@ const itemSchema = new Schema({
         required: true,
     },
 });
-// TODO add unique index to restaurantId, name
+itemSchema.index({restaurantId: 1, name: 1}, {unique: true});
 const ItemModel = mongoose.model<Item & mongoose.Document>('Item', itemSchema);
 
 export default ItemModel;

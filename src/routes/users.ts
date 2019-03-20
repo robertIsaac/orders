@@ -2,6 +2,7 @@ import express = require("express");
 import UserModel from "../model/user.model";
 import {NextFunction, Request, Response} from "express-serve-static-core";
 import {User} from "../interfaces/user.interface";
+import {jwtMiddleware} from "../middlewares/jwt";
 
 const jwt = require('jsonwebtoken');
 const router = express.Router();
@@ -17,65 +18,19 @@ function getJWTToken(user: User, req: Request) {
 }
 
 /* GET users listing. */
-router.get("/", (req, res, next) => {
-    const env = req.app.get('env');
-    const {JWT_SECRET} = env;
-    let token;
-    if (req.headers.authorization && typeof req.headers.authorization === 'string') {
-        token = req.headers.authorization.replace('Bearer ', '');
-    } else {
-        res.status(403).send('invalid token');
-        return;
-    }
-    let jwtBody;
-    try {
-        jwtBody = jwt.verify(token, JWT_SECRET, {expiresIn: '7d'});
-    } catch (e) {
-        console.log(e);
-        res.status(403).send('invalid token');
-        return;
-    }
-    UserModel.findOne({_id: jwtBody.id}).then(user => {
-        if (!user) {
-            res.status(403).send('invalid token');
-            return;
-        }
-        UserModel.find().then(users => {
-            res.send(users);
-            next();
-        })
-    });
+router.get("/", jwtMiddleware, (req, res, next) => {
+    UserModel.find().then(users => {
+        res.send(users);
+        next();
+    })
 });
 
 /* GET user. */
-router.get("/:userId", (req, res, next) => {
-    const env = req.app.get('env');
-    const {JWT_SECRET} = env;
-    let token;
-    if (req.headers.authorization && typeof req.headers.authorization === 'string') {
-        token = req.headers.authorization.replace('Bearer ', '');
-    } else {
-        res.status(403).send('invalid token');
-        return;
-    }
-    let jwtBody;
-    try {
-        jwtBody = jwt.verify(token, JWT_SECRET, {expiresIn: '7d'});
-    } catch (e) {
-        console.log(e);
-        res.status(403).send('invalid token');
-        return;
-    }
-    UserModel.findOne({_id: jwtBody.id}).then(user => {
-        if (!user) {
-            res.status(403).send('invalid token');
-            return;
-        }
-        UserModel.findOne({_id: req.params.userId}).then(user => {
-            res.send(user);
-            next();
-        })
-    });
+router.get("/:userId", jwtMiddleware, (req, res, next) => {
+    UserModel.findOne({_id: req.params.userId}).then(user => {
+        res.send(user);
+        next();
+    })
 });
 
 function wrongCredentials(res: Response, next: NextFunction) {
@@ -127,7 +82,8 @@ router.delete("/all", (req, res, next) => {
 });
 
 router.get("/logout", (req, res) => {
-    res.send('TO DO');
+    // TODO logout user
+    res.status(503).send('not yet implemented');
 });
 
 export = router;

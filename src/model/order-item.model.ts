@@ -25,7 +25,7 @@ const orderItemSchema = new Schema({
         required: true,
     },
 });
-// TODO add unique index to userId, itemId, orderId
+orderItemSchema.index({userId: 1, itemId: 1, orderId: 1}, {unique: true});
 const OrderItemModel = mongoose.model<OrderItem & mongoose.Document>('OrderItem', orderItemSchema);
 
 export default OrderItemModel;

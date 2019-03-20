@@ -26,7 +26,6 @@ router.get("/", (req, res, next) => {
  * @return {string} the id of the created order
  * */
 router.post("/", (req, res, next) => {
-    // TODO get the user id from the JWT
     RestaurantModel.findOne({_id: req.body.restaurantId}).then((restaurant: Restaurant | null) => {
         if (!restaurant) {
             res.status(400).send(`no restaurant found with id ${req.body.restaurantId}`);
@@ -34,7 +33,7 @@ router.post("/", (req, res, next) => {
         }
         const total = restaurant.delivery * (restaurant.tax / 100 + 1);
         const order: Order = {
-            userId: req.body.userId,
+            userId: req.app.get('jwt').id,
             restaurantId: req.body.restaurantId,
             status: 'new',
             subtotal: 0,
@@ -101,14 +100,13 @@ router.get("/:orderId/items", (req, res, next) => {
  * */
 router.post("/:orderId/items", (req, res, next) => {
     ItemModel.findOne({_id: req.body.itemId}).then((item: Item | null) => {
-        // TODO get the user id from the JWT
         if (!item) {
             res.status(400).send(`no item found with id ${req.body.itemId}`);
             return;
         }
         const orderItem: OrderItem = {
             orderId: req.params.orderId,
-            userId: req.body.userId,
+            userId: req.app.get('jwt').id,
             itemId: req.body.itemId,
             price: item.price,
             quantity: req.body.quantity,
@@ -121,6 +119,10 @@ router.post("/:orderId/items", (req, res, next) => {
             res.status(400).send('bad request');
             next();
         });
+    }).catch(error => {
+        console.error(error);
+        res.status(400).send({message: `can't find item with id ${req.body.itemId}`});
+        next();
     });
 });
 

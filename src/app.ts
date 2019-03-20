@@ -9,6 +9,7 @@ import restaurantsRouter from "./routes/restaurants";
 import 'dotenv/config';
 import validateEnv from './utils/validateEnv';
 import mongoose from 'mongoose';
+import {jwtMiddleware} from "./middlewares/jwt";
 
 const app = express();
 
@@ -34,7 +35,7 @@ mongoose.connect(`mongodb://${mongoCredentials}${MONGO_PATH}`, {useNewUrlParser:
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
-app.use("/orders", ordersRouter);
-app.use("/restaurants", restaurantsRouter);
+app.use("/orders", jwtMiddleware, ordersRouter);
+app.use("/restaurants", jwtMiddleware, restaurantsRouter);
 
 export = app;
