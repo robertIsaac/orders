@@ -27,7 +27,7 @@ router.get("/", jwtMiddleware, (req, res, next) => {
 
 /* GET user. */
 router.get("/:userId", jwtMiddleware, (req, res, next) => {
-    UserModel.findOne({_id: req.params.userId}).then(user => {
+    UserModel.findById(req.params.userId).then(user => {
         res.send(user);
         next();
     })
@@ -79,11 +79,6 @@ router.delete("/all", (req, res, next) => {
         res.send('removed all');
         next();
     });
-});
-
-router.get("/logout", (req, res) => {
-    // TODO logout user
-    res.status(503).send('not yet implemented');
 });
 
 export = router;
