@@ -20,7 +20,7 @@ export function jwtMiddleware(req, res, next) {
         res.status(403).send('invalid token');
         return;
     }
-    UserModel.findOne({_id: jwtBody.id}).then(user => {
+    UserModel.findById(jwtBody.id).then(user => {
         if (!user) {
             res.status(403).send('invalid token');
             return;

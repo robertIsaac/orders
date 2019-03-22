@@ -7,7 +7,7 @@ import ItemModel from "../model/item.model";
 const router = express.Router();
 
 /**
- * return all the stores
+ * return all the restaurants
  * */
 router.get("/", (req, res, next) => {
     RestaurantModel.find().then(restaurants => {
@@ -45,14 +45,30 @@ router.post("/", (req, res, next) => {
 });
 
 /**
- * return all the stores
+ * return all the restaurant's items
  * */
 router.get("/:restaurantId/items/", (req, res, next) => {
-    // TODO if restaurant id doesn't exits return error instead of empty array
-    ItemModel.find().then(items => {
-        res.send(items);
+    const {restaurantId} = req.params;
+    RestaurantModel.findById(restaurantId).then(restaurant => {
+        if (!restaurant) {
+            res.status(400).send({message: `no restaurant found with id ${restaurantId}`});
+            next();
+            return;
+        }
+        ItemModel.find({restaurantId: restaurantId}).then(items => {
+            res.send(items);
+            next();
+        }).catch(error => {
+            console.error(error);
+            res.status(500).send({message: `internal server error`});
+            next();
+        });
+    }).catch(error => {
+        console.error(error);
+        res.status(400).send({message: `no restaurant found with id ${restaurantId}`});
         next();
-    })
+        return;
+    });
 });
 
 router.post("/:restaurantId/items/", (req, res, next) => {

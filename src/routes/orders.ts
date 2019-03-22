@@ -5,7 +5,6 @@ import RestaurantModel from "../model/restaurant.model";
 import {Restaurant} from "../interfaces/restaurant.interface";
 import OrderItemModel from "../model/order-item.model";
 import ItemModel from "../model/item.model";
-import {Item} from "../interfaces/item.interface";
 import {OrderItem} from "../interfaces/order-item.interface";
 
 const router = express.Router();
@@ -26,7 +25,7 @@ router.get("/", (req, res, next) => {
  * @return {string} the id of the created order
  * */
 router.post("/", (req, res, next) => {
-    RestaurantModel.findOne({_id: req.body.restaurantId}).then((restaurant: Restaurant | null) => {
+    RestaurantModel.findById(req.body.restaurantId).then((restaurant: Restaurant | null) => {
         if (!restaurant) {
             res.status(400).send(`no restaurant found with id ${req.body.restaurantId}`);
             return;
@@ -54,8 +53,8 @@ router.post("/", (req, res, next) => {
 });
 
 router.get("/:orderId", (req, res, next) => {
-    OrderModel.find({_id: req.params.orderId}).then(order => {
-        res.send(order[0]);
+    OrderModel.findById(req.params.orderId).then(order => {
+        res.send(order);
         next();
     }).catch((error) => {
         console.error(error);
@@ -99,7 +98,7 @@ router.get("/:orderId/items", (req, res, next) => {
  * @return {string} the id of the created order item
  * */
 router.post("/:orderId/items", (req, res, next) => {
-    ItemModel.findOne({_id: req.body.itemId}).then((item: Item | null) => {
+    ItemModel.findById(req.body.itemId).then(item => {
         if (!item) {
             res.status(400).send(`no item found with id ${req.body.itemId}`);
             return;
