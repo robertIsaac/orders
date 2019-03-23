@@ -10,6 +10,7 @@ import 'dotenv/config';
 import validateEnv from './utils/validateEnv';
 import mongoose from 'mongoose';
 import {jwtMiddleware} from "./middlewares/jwt";
+import {CORS} from "./utils/cors";
 
 const app = express();
 
@@ -26,6 +27,7 @@ const {
 } = process.env;
 validateEnv();
 app.set('env', process.env);
+app.use(CORS);
 mongoose.set('useCreateIndex', true);
 let mongoCredentials = '';
 if (MONGO_USER && MONGO_PASSWORD) {
