@@ -13,7 +13,7 @@ function getJWTToken(user: User, req: Request) {
     const {JWT_SECRET} = env;
     return jwt.sign({
         id: user._id,
-        name: user.name,
+        username: user.username,
     }, JWT_SECRET, {expiresIn: '7d'});
 }
 
@@ -39,7 +39,7 @@ function wrongCredentials(res: Response, next: NextFunction) {
 }
 
 router.post("/login", (req, res, next) => {
-    UserModel.findOne({name: req.body.name}).select('+password').then((user) => {
+    UserModel.findOne({username: req.body.username}).select('+password').then((user) => {
         if (!user) {
             wrongCredentials(res, next);
             return;
@@ -59,7 +59,7 @@ router.post("/login", (req, res, next) => {
 router.post("/register", (req, res, next) => {
     const hashedPassword = bcrypt.hashSync(req.body.password, +req.app.get('env').SALT_ROUNDS);
     const user: User = {
-        name: req.body.name,
+        username: req.body.username,
         password: hashedPassword,
     };
     const newUser = new UserModel(user);
