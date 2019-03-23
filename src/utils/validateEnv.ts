@@ -1,4 +1,4 @@
-import {cleanEnv, num, port, str} from 'envalid';
+import {bool, cleanEnv, num, port, str} from 'envalid';
 
 function validateEnv() {
     cleanEnv(process.env, {
@@ -8,6 +8,7 @@ function validateEnv() {
         PORT: port(),
         JWT_SECRET: str(),
         SALT_ROUNDS: num(),
+        PRODUCTION: bool(),
     });
 }
 
