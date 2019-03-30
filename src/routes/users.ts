@@ -51,7 +51,7 @@ router.post("/login", (req, res, next) => {
         const token = getJWTToken(user, req);
         res.send({token: token});
     }).catch((error) => {
-        console.log(error);
+        console.error(error);
         wrongCredentials(res, next);
     });
 });
@@ -60,6 +60,7 @@ router.post("/register", (req, res, next) => {
     const hashedPassword = bcrypt.hashSync(req.body.password, +req.app.get('env').SALT_ROUNDS);
     const user: User = {
         username: req.body.username,
+        jobTitle: req.body.jobTitle,
         password: hashedPassword,
     };
     const newUser = new UserModel(user);
@@ -68,8 +69,8 @@ router.post("/register", (req, res, next) => {
         res.status(201).json({token: token});
         next();
     }).catch(error => {
-        console.log(error);
-        res.status(400).send('bad request');
+        console.error(error);
+        res.status(400).send('username already exits');
         next();
     });
 });
