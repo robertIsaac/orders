@@ -1,3 +1,4 @@
 language: node_js
 node_js:
   - "node"
+  run: "npm run build"
