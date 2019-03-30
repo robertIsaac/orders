@@ -17,6 +17,9 @@ const userSchema = new Schema({
     balance: {
         type: Number
     },
+    jobTitle: {
+        type: String
+    },
 });
 
 const UserModel = mongoose.model<User & mongoose.Document>('User', userSchema);

@@ -6,7 +6,7 @@ export function jwtMiddleware(req, res, next) {
     const env = req.app.get('env');
     const {JWT_SECRET} = env;
     let token;
-    if (req.headers.authorization && typeof req.headers.authorization === 'string') {
+    if (req.headers.authorization) {
         token = req.headers.authorization.replace('Bearer ', '');
     } else {
         res.status(403).send('invalid token');
@@ -16,7 +16,7 @@ export function jwtMiddleware(req, res, next) {
     try {
         jwtBody = jwt.verify(token, JWT_SECRET, {expiresIn: '7d'});
     } catch (e) {
-        console.log(e);
+        console.error(e);
         res.status(403).send('invalid token');
         return;
     }

@@ -38,7 +38,7 @@ router.post("/", (req, res, next) => {
         res.status(201).json({id: newRestaurant._id});
         next();
     }).catch(error => {
-        console.log(error);
+        console.error(error);
         res.status(400).send('bad request');
         next();
     });
@@ -81,7 +81,7 @@ router.post("/:restaurantId/items/", (req, res, next) => {
         res.status(201).json({id: newItem._id});
         next();
     }).catch(error => {
-        console.log(error);
+        console.error(error);
         res.status(400).send('bad request');
         next();
     });
