@@ -4,7 +4,7 @@ import {User} from "../interfaces/user.interface";
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-    name: {
+    username: {
         type: String,
         unique: true,
         required: true
@@ -16,6 +16,9 @@ const userSchema = new Schema({
     },
     balance: {
         type: Number
+    },
+    jobTitle: {
+        type: String
     },
 });
 

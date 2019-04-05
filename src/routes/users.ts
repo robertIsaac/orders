@@ -10,11 +10,11 @@ const bcrypt = require('bcrypt');
 
 function getJWTToken(user: User, req: Request) {
     const env = req.app.get('env');
-    const {JWT_SECRET} = env;
+    const {JWT_SECRET, JWT_EXP} = env;
     return jwt.sign({
         id: user._id,
-        name: user.name,
-    }, JWT_SECRET, {expiresIn: '7d'});
+        username: user.username,
+    }, JWT_SECRET, {expiresIn: JWT_EXP});
 }
 
 /* GET users listing. */
@@ -39,7 +39,7 @@ function wrongCredentials(res: Response, next: NextFunction) {
 }
 
 router.post("/login", (req, res, next) => {
-    UserModel.findOne({name: req.body.name}).select('+password').then((user) => {
+    UserModel.findOne({username: req.body.username}).select('+password').then((user) => {
         if (!user) {
             wrongCredentials(res, next);
             return;
@@ -51,7 +51,7 @@ router.post("/login", (req, res, next) => {
         const token = getJWTToken(user, req);
         res.send({token: token});
     }).catch((error) => {
-        console.log(error);
+        console.error(error);
         wrongCredentials(res, next);
     });
 });
@@ -59,7 +59,8 @@ router.post("/login", (req, res, next) => {
 router.post("/register", (req, res, next) => {
     const hashedPassword = bcrypt.hashSync(req.body.password, +req.app.get('env').SALT_ROUNDS);
     const user: User = {
-        name: req.body.name,
+        username: req.body.username,
+        jobTitle: req.body.jobTitle,
         password: hashedPassword,
     };
     const newUser = new UserModel(user);
@@ -68,8 +69,8 @@ router.post("/register", (req, res, next) => {
         res.status(201).json({token: token});
         next();
     }).catch(error => {
-        console.log(error);
-        res.status(400).send('bad request');
+        console.error(error);
+        res.status(400).send('username already exits');
         next();
     });
 });
