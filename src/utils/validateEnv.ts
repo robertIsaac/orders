@@ -7,6 +7,7 @@ function validateEnv() {
         MONGO_USER: str(),
         PORT: port(),
         JWT_SECRET: str(),
+        JWT_EXP: str(),
         SALT_ROUNDS: num(),
         PRODUCTION: bool(),
     });

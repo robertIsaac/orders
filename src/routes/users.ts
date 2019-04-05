@@ -10,11 +10,11 @@ const bcrypt = require('bcrypt');
 
 function getJWTToken(user: User, req: Request) {
     const env = req.app.get('env');
-    const {JWT_SECRET} = env;
+    const {JWT_SECRET, JWT_EXP} = env;
     return jwt.sign({
         id: user._id,
         username: user.username,
-    }, JWT_SECRET, {expiresIn: '7d'});
+    }, JWT_SECRET, {expiresIn: JWT_EXP});
 }
 
 /* GET users listing. */
