@@ -11,8 +11,23 @@ import validateEnv from './utils/validateEnv';
 import mongoose from 'mongoose';
 import {jwtMiddleware} from "./middlewares/jwt";
 import {CORS} from "./utils/cors";
+import {RestaurantAPI} from "./datasources/restaurant-api";
+
+const {ApolloServer} = require('apollo-server-express');
+const typeDefs = require('./schema');
+const resolvers = require('./resolvers');
 
 const app = express();
+
+// graphql
+const server = new ApolloServer({
+    typeDefs,
+    resolvers,
+    dataSources: () => ({
+        restaurantAPI: new RestaurantAPI()
+    })
+});
+server.applyMiddleware({app});
 
 app.use(logger("dev"));
 app.use(express.json());
