@@ -1,5 +1,7 @@
 // import {Restaurant} from "../interfaces/restaurant.interface";
 import RestaurantModel from "../model/restaurant.model";
+import ItemModel from "../model/item.model";
+import {Restaurant} from "../interfaces/restaurant.interface";
 // import {Item} from "../interfaces/item.interface";
 // import ItemModel from "../model/item.model";
 // import express = require("express");
@@ -8,9 +10,29 @@ import RestaurantModel from "../model/restaurant.model";
 
 export class RestaurantAPI {
     async getAllRestaurants() {
-        return await RestaurantModel.find();
+        const restaurants = await RestaurantModel.find();
+        return restaurants.map(restaurant => this.restaurantReducer(restaurant));
     }
 
+    async getRestaurant(id: string) {
+        const restaurant = await RestaurantModel.findById(id);
+        if (!restaurant) {
+            return null;
+        }
+        return await this.restaurantReducer(restaurant);
+    }
+
+    async getRestaurantItems(restaurantId: string) {
+        return await ItemModel.find({restaurantId: restaurantId});
+    }
+
+    async restaurantReducer(restaurant: Restaurant) {
+        if (!restaurant._id) {
+            return null;
+        }
+        restaurant.items = await this.getRestaurantItems(restaurant._id);
+        return restaurant;
+    }
 }
 
 /**

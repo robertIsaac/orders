@@ -8,6 +8,7 @@ const typeDefs = gql`
             pageSize: Int
             after: String
         ): RestaurantsConnection!
+        restaurant(id: ID!): Restaurant
         #        order(id: ID!): Order
         #        orders(
         #            pageSize: Int
@@ -51,11 +52,19 @@ const typeDefs = gql`
     }
 
     type Restaurant {
+        id(id: ID): ID!
         name: String!
         phone: String!
         menu: String
         delivery: Float
         tax: Float
+        items: [Item]
+    }
+
+    type Item {
+        id: ID!
+        name: String
+        price: Float
     }
 
     type Mutation {

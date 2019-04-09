@@ -24,6 +24,9 @@ module.exports = {
                     : false,
             };
         },
+        restaurant: async (_, {id}, {dataSources}) => {
+            return await dataSources.restaurantAPI.getRestaurant(id);
+        },
         // launch: (_, { id }, { dataSources }) =>
         //     dataSources.launchAPI.getLaunchById({ launchId: id }),
         // me: async (_, __, { dataSources }) =>
