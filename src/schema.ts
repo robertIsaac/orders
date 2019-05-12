@@ -9,12 +9,11 @@ const typeDefs = gql`
             after: String
         ): RestaurantsConnection!
         restaurant(id: ID!): Restaurant
-        #        order(id: ID!): Order
-        #        orders(
-        #            pageSize: Int
-        #            after: String
-        #        ): OrderConnection!
-        #        order(id: ID!): Order
+        orders(
+            pageSize: Int
+            after: String
+        ): OrderConnection!
+        order(id: ID!): Order
         # Queries for the current user
         #        me: User
     }
@@ -42,6 +41,7 @@ const typeDefs = gql`
         tax: Float!
         time: Date!
         tip: Float
+        items: [OrderItem]!
     }
 
     type User {
@@ -65,6 +65,14 @@ const typeDefs = gql`
         id: ID!
         name: String
         price: Float
+    }
+
+    type OrderItem {
+        id: ID!
+        price: Float
+        quantity: Float
+        item: Item
+        user: User
     }
 
     type Mutation {

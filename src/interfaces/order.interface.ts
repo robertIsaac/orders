@@ -1,3 +1,5 @@
+import { OrderItem } from "./order-item.interface";
+
 export interface Order {
     _id?: string;
     userId: string;
@@ -9,4 +11,5 @@ export interface Order {
     tax: number;
     time: Date;
     tip?: number;
+    items: OrderItem[]
 }

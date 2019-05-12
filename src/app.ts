@@ -9,9 +9,10 @@ import restaurantsRouter from "./routes/restaurants";
 import 'dotenv/config';
 import validateEnv from './utils/validateEnv';
 import mongoose from 'mongoose';
-import {jwtMiddleware} from "./middlewares/jwt";
-import {CORS} from "./utils/cors";
-import {RestaurantAPI} from "./datasources/restaurant-api";
+import { jwtMiddleware } from "./middlewares/jwt";
+import { CORS } from "./utils/cors";
+import { RestaurantAPI } from "./datasources/restaurant-api";
+import { OrderAPI } from "./datasources/order-api";
 
 const {ApolloServer} = require('apollo-server-express');
 const typeDefs = require('./schema');
@@ -24,7 +25,8 @@ const server = new ApolloServer({
     typeDefs,
     resolvers,
     dataSources: () => ({
-        restaurantAPI: new RestaurantAPI()
+        restaurantAPI: new RestaurantAPI(),
+        OrderAPI: new OrderAPI(),
     })
 });
 server.applyMiddleware({app});

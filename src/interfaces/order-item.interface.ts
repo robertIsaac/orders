@@ -5,4 +5,5 @@ export interface OrderItem {
     userId: string;
     price: number;
     quantity: number;
+    item: any; // TODO set type
 }

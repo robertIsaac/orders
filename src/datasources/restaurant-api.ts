@@ -1,7 +1,7 @@
 // import {Restaurant} from "../interfaces/restaurant.interface";
 import RestaurantModel from "../model/restaurant.model";
 import ItemModel from "../model/item.model";
-import {Restaurant} from "../interfaces/restaurant.interface";
+import { Restaurant } from "../interfaces/restaurant.interface";
 // import {Item} from "../interfaces/item.interface";
 // import ItemModel from "../model/item.model";
 // import express = require("express");
@@ -32,6 +32,14 @@ export class RestaurantAPI {
         }
         restaurant.items = await this.getRestaurantItems(restaurant._id);
         return restaurant;
+    }
+
+    async getItem(itemId: string) {
+        const item = await ItemModel.findById(itemId);
+        if (!item) {
+            return null;
+        }
+        return item;
     }
 }
 
