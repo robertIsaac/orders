@@ -11,5 +11,5 @@ export interface Order {
     tax: number;
     time: Date;
     tip?: number;
-    items: OrderItem[]
+    items?: OrderItem[]
 }

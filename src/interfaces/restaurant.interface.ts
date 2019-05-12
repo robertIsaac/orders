@@ -1,4 +1,4 @@
-import {Item} from "./item.interface";
+import { Item } from "./item.interface";
 
 export interface Restaurant {
     _id?: string;
@@ -7,5 +7,5 @@ export interface Restaurant {
     menu?: string;
     delivery: number;
     tax: number;
-    items: Item[]
+    items?: Item[]
 }
