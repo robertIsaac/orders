@@ -1,4 +1,5 @@
 import { OrderItem } from "./order-item.interface";
+import { User } from "./user.interface";
 
 export interface Order {
     _id?: string;
@@ -11,5 +12,7 @@ export interface Order {
     tax: number;
     time: Date;
     tip?: number;
-    items?: OrderItem[]
+    items?: OrderItem[];
+    user: User;
+    restaurant: any;
 }

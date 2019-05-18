@@ -1,3 +1,6 @@
+import { Item } from "./item.interface";
+import { User } from "./user.interface";
+
 export interface OrderItem {
     _id?: string;
     orderId: string;
@@ -5,5 +8,6 @@ export interface OrderItem {
     userId: string;
     price: number;
     quantity: number;
-    item?: any; // TODO set type
+    item?: Item
+    user?: User
 }

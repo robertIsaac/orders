@@ -32,8 +32,6 @@ const typeDefs = gql`
 
     type Order {
         id: ID!
-        user: User
-        restaurant: Restaurant
         status: String!
         subtotal: Float!
         total: Float!
@@ -41,6 +39,8 @@ const typeDefs = gql`
         tax: Float!
         time: Date!
         tip: Float
+        user: User!
+        restaurant: Restaurant!
         items: [OrderItem]!
     }
 
@@ -56,23 +56,23 @@ const typeDefs = gql`
         name: String!
         phone: String!
         menu: String
-        delivery: Float
-        tax: Float
-        items: [Item]
+        delivery: Float!
+        tax: Float!
+        items: [Item]!
     }
 
     type Item {
         id: ID!
-        name: String
-        price: Float
+        name: String!
+        price: Float!
     }
 
     type OrderItem {
         id: ID!
-        price: Float
-        quantity: Float
-        item: Item
-        user: User
+        price: Float!
+        quantity: Int!
+        item: Item!
+        user: User!
     }
 
     type Mutation {
