@@ -1,12 +1,13 @@
 import express = require("express");
 import UserModel from "../model/user.model";
-import {NextFunction, Request, Response} from "express-serve-static-core";
-import {User} from "../interfaces/user.interface";
-import {jwtMiddleware} from "../middlewares/jwt";
+import { NextFunction, Request, Response } from "express-serve-static-core";
+import { User } from "../interfaces/user.interface";
+import { jwtMiddleware } from "../middlewares/jwt";
 
 const jwt = require('jsonwebtoken');
 const router = express.Router();
-const bcrypt = require('bcrypt');
+const crypto = require('crypto');
+
 
 function getJWTToken(user: User, req: Request) {
     const env = req.app.get('env');
@@ -44,7 +45,7 @@ router.post("/login", (req, res, next) => {
             wrongCredentials(res, next);
             return;
         }
-        if (!bcrypt.compareSync(req.body.password, user.password)) {
+        if (!verifyHash(req.body.password, user.password)) {
             wrongCredentials(res, next);
             return;
         }
@@ -57,7 +58,7 @@ router.post("/login", (req, res, next) => {
 });
 
 router.post("/register", (req, res, next) => {
-    const hashedPassword = bcrypt.hashSync(req.body.password, +req.app.get('env').SALT_ROUNDS);
+    const hashedPassword = hashPassword(req.body.password);
     const user: User = {
         username: req.body.username,
         jobTitle: req.body.jobTitle,
@@ -81,5 +82,20 @@ router.delete("/all", (req, res, next) => {
         next();
     });
 });
+
+// Create password hash using Password based key derivative function 2
+function hashPassword(password) {
+    const salt = crypto.randomBytes(16).toString('hex');
+    const hash = crypto.pbkdf2Sync(password, salt, 2048, 32, 'sha512').toString('hex');
+    return [salt, hash].join('$');
+}
+
+// Checking the password hash
+function verifyHash(password, original) {
+    const originalHash = original.split('$')[1];
+    const salt = original.split('$')[0];
+    const hash = crypto.pbkdf2Sync(password, salt, 2048, 32, 'sha512').toString('hex');
+    return hash === originalHash;
+}
 
 export = router;
