@@ -8,7 +8,6 @@ const jwt = require('jsonwebtoken');
 const router = express.Router();
 const crypto = require('crypto');
 
-
 function getJWTToken(user: User, req: Request) {
     const env = req.app.get('env');
     const {JWT_SECRET, JWT_EXP} = env;

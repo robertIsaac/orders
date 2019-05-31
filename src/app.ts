@@ -13,6 +13,7 @@ import { jwtMiddleware } from "./middlewares/jwt";
 import { CORS } from "./utils/cors";
 import { RestaurantAPI } from "./datasources/restaurant-api";
 import { OrderAPI } from "./datasources/order-api";
+import { UserAPI } from "./datasources/user-api";
 
 const {ApolloServer} = require('apollo-server-express');
 const typeDefs = require('./schema');
@@ -21,12 +22,22 @@ const resolvers = require('./resolvers');
 const app = express();
 
 // graphql
+const userAPI = new UserAPI();
 const server = new ApolloServer({
+    context: async ({req}) => {
+        // simple auth check on every request
+        const auth = userAPI.auth(req);
+        if (!auth) {
+            return null;
+        }
+        return {user: {...auth}};
+    },
     typeDefs,
     resolvers,
     dataSources: () => ({
         restaurantAPI: new RestaurantAPI(),
-        OrderAPI: new OrderAPI(),
+        orderAPI: new OrderAPI(),
+        userAPI,
     })
 });
 server.applyMiddleware({app});

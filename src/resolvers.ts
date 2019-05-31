@@ -28,7 +28,7 @@ module.exports = {
             return await dataSources.restaurantAPI.getRestaurant(id);
         },
         orders: async (_, {pageSize = 20, after}, {dataSources}) => {
-            const allOrders = await dataSources.OrderAPI.getAllOrders();
+            const allOrders = await dataSources.orderAPI.getAllOrders();
             // we want these in reverse chronological order
             allOrders.reverse();
 
@@ -50,19 +50,14 @@ module.exports = {
             };
         },
         order: async (_, {id}, {dataSources}) => {
-            return await dataSources.OrderAPI.getOrder(id);
+            return await dataSources.orderAPI.getOrder(id);
         },
-        // launch: (_, { id }, { dataSources }) =>
-        //     dataSources.launchAPI.getLaunchById({ launchId: id }),
         // me: async (_, __, { dataSources }) =>
         //     dataSources.userAPI.findOrCreateUser(),
-        // Mission: {
-        //     // make sure the default size is 'large' in case user doesn't specify
-        //     missionPatch: (mission, { size } = { size: 'LARGE' }) => {
-        //         return size === 'SMALL'
-        //             ? mission.missionPatchSmall
-        //             : mission.missionPatchLarge;
-        //     },
-        // },
+    },
+    Mutation: {
+        login: async (_, {username, password}, {dataSources}) => {
+            return await dataSources.userAPI.login(username, password);
+        }
     },
 };

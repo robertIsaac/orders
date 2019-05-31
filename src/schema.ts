@@ -77,12 +77,12 @@ const typeDefs = gql`
 
     type Mutation {
         # if false, booking trips failed -- check errors
-        bookTrips(launchIds: [ID]!): TripUpdateResponse!
+        #        bookTrips(launchIds: [ID]!): TripUpdateResponse!
 
         # if false, cancellation failed -- check errors
-        cancelTrip(launchId: ID!): TripUpdateResponse!
+        #        cancelTrip(launchId: ID!): TripUpdateResponse!
 
-        login(username: String): String # login token
+        login(username: String, password: String): String # login token
     }
 
     type TripUpdateResponse {
