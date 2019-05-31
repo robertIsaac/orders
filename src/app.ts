@@ -37,7 +37,9 @@ const server = new ApolloServer({
         restaurantAPI: new RestaurantAPI(),
         orderAPI: new OrderAPI(),
         userAPI,
-    })
+    }),
+    introspection: true,
+    playground: true,
 });
 server.applyMiddleware({app});
 
