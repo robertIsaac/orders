@@ -82,12 +82,35 @@ const typeDefs = gql`
         # if false, cancellation failed -- check errors
         #        cancelTrip(launchId: ID!): TripUpdateResponse!
 
-        login(username: String, password: String): String # login token
+        login(username: String!, password: String!): String # login token
+        insertRestaurant(restaurantInput: RestaurantInput): String # restaurant id
+        insertRestaurantItem(restaurantItemInput: RestaurantItemInput): String # item id
+        insertOrder(orderInput: OrderInput): String # order id
+        insertOrderItem(orderItemInput: OrderItemInput): String # order item id
     }
 
-    type TripUpdateResponse {
-        success: Boolean!
-        message: String
+    input RestaurantInput {
+        name: String!
+        phone: String!
+        delivery: Float!
+        tax: Float!
+        menu: String
+    }
+
+    input RestaurantItemInput {
+        restaurantId: ID!
+        name: String!
+        price: Float!
+    }
+
+    input OrderInput {
+        restaurantId: ID!
+    }
+
+    input OrderItemInput {
+        orderId: ID!
+        restaurantItemId: ID!
+        quantity: Int!
     }
 `;
 module.exports = typeDefs;

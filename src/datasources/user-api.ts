@@ -29,15 +29,11 @@ export class UserAPI {
             console.error(e);
             return null;
         }
-        UserModel.findById(jwtBody.id).then(user => {
-            if (!user) {
-                return null;
-            }
-            return jwtBody;
-        }).catch((error) => {
-            console.error(error);
-            return;
-        });
+        const user = UserModel.findById(jwtBody.id);
+        if (!user) {
+            return null;
+        }
+        return jwtBody;
     }
 
     async getUser(userId: string) {

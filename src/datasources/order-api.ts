@@ -3,6 +3,7 @@ import { Order } from "../interfaces/order.interface";
 import OrderItemModel from "../model/order-item.model";
 import { RestaurantAPI } from "./restaurant-api";
 import { UserAPI } from "./user-api";
+import { OrderItem } from "../interfaces/order-item.interface";
 
 export class OrderAPI {
     restaurantAPI: RestaurantAPI = new RestaurantAPI();
@@ -51,5 +52,45 @@ export class OrderAPI {
         order.user = user;
         order.restaurant = await this.restaurantAPI.getRestaurant(order.restaurantId);
         return order;
+    }
+
+    async insertOrder(orderInput) {
+        const restaurant = await this.restaurantAPI.getRestaurant(orderInput.restaurantId);
+        if (!restaurant) {
+            return null;
+        }
+        const total = restaurant.delivery * (restaurant.tax / 100 + 1);
+        const order: Order = {
+            restaurantId: orderInput.restaurantId,
+            userId: '5cf137d585dd966d28a798d5',
+            delivery: restaurant.delivery,
+            tax: restaurant.tax,
+            status: 'new',
+            subtotal: 0,
+            time: new Date,
+            total
+        };
+        const newOrder = await new OrderModel(order).save();
+        return newOrder._id;
+    }
+
+    async insertOrderItem(orderItemInput) {
+        const item = await this.restaurantAPI.getRestaurantItem(orderItemInput.restaurantItemId);
+        if (!item) {
+            return null;
+        }
+        const order = await this.getOrder(orderItemInput.orderId);
+        if (!order) {
+            return null;
+        }
+        const orderItem: OrderItem = {
+            itemId: item._id,
+            price: item.price,
+            userId: '5cf137d585dd966d28a798d5',
+            orderId: orderItemInput.orderId,
+            quantity: orderItemInput.quantity,
+        };
+        const newOrderItem = await new OrderItemModel(orderItem).save();
+        return newOrderItem._id;
     }
 }

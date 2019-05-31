@@ -13,6 +13,6 @@ export interface Order {
     time: Date;
     tip?: number;
     items?: OrderItem[];
-    user: User;
-    restaurant: any;
+    user?: User;
+    restaurant?: any;
 }

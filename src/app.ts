@@ -25,12 +25,11 @@ const app = express();
 const userAPI = new UserAPI();
 const server = new ApolloServer({
     context: async ({req}) => {
-        // simple auth check on every request
-        const auth = userAPI.auth(req);
+        const auth = await userAPI.auth(req);
         if (!auth) {
             return null;
         }
-        return {user: {...auth}};
+        return auth;
     },
     typeDefs,
     resolvers,

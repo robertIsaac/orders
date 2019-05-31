@@ -58,6 +58,18 @@ module.exports = {
     Mutation: {
         login: async (_, {username, password}, {dataSources}) => {
             return await dataSources.userAPI.login(username, password);
+        },
+        insertRestaurant: async (_, {restaurantInput}, {dataSources}) => {
+            return dataSources.restaurantAPI.insertRestaurant(restaurantInput);
+        },
+        insertRestaurantItem: async (_, {restaurantItemInput}, {dataSources}) => {
+            return dataSources.restaurantAPI.insertRestaurantItem(restaurantItemInput);
+        },
+        insertOrder: async (_, {orderInput}, {dataSources}) => {
+            return dataSources.orderAPI.insertOrder(orderInput);
+        },
+        insertOrderItem: async (_, {orderItemInput}, {dataSources}) => {
+            return dataSources.orderAPI.insertOrderItem(orderItemInput);
         }
     },
 };
