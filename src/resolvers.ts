@@ -1,8 +1,10 @@
+import { authenticated } from "./utils/authenticated";
+
 const {paginateResults} = require('./utils/paginate-results');
 
 module.exports = {
     Query: {
-        restaurants: async (_, {pageSize = 20, after}, {dataSources}) => {
+        restaurants: authenticated(async (_, {pageSize = 20, after}, {dataSources}) => {
             const allRestaurants = await dataSources.restaurantAPI.getAllRestaurants();
             // we want these in reverse chronological order
             allRestaurants.reverse();
@@ -23,11 +25,11 @@ module.exports = {
                     allRestaurants[allRestaurants.length - 1].cursor
                     : false,
             };
-        },
-        restaurant: async (_, {id}, {dataSources}) => {
+        }),
+        restaurant: authenticated(async (_, {id}, {dataSources}) => {
             return await dataSources.restaurantAPI.getRestaurant(id);
-        },
-        orders: async (_, {pageSize = 20, after}, {dataSources}) => {
+        }),
+        orders: authenticated(async (_, {pageSize = 20, after}, {dataSources}) => {
             const allOrders = await dataSources.orderAPI.getAllOrders();
             // we want these in reverse chronological order
             allOrders.reverse();
@@ -48,28 +50,31 @@ module.exports = {
                     allOrders[allOrders.length - 1].cursor
                     : false,
             };
-        },
-        order: async (_, {id}, {dataSources}) => {
+        }),
+        order: authenticated(async (_, {id}, {dataSources}) => {
             return await dataSources.orderAPI.getOrder(id);
-        },
-        // me: async (_, __, { dataSources }) =>
-        //     dataSources.userAPI.findOrCreateUser(),
+        }),
+        me: authenticated(async (_, __, {dataSources, jwt}) => {
+            return dataSources.userAPI.getUser(jwt.id)
+        }),
     },
     Mutation: {
-        login: async (_, {username, password}, {dataSources}) => {
+        register: async (_, {username, password, jobTitle}, {dataSources}) => {
+            return await dataSources.userAPI.register(username, password, jobTitle);
+        }, login: async (_, {username, password}, {dataSources}) => {
             return await dataSources.userAPI.login(username, password);
         },
-        insertRestaurant: async (_, {restaurantInput}, {dataSources}) => {
+        insertRestaurant: authenticated(async (_, {restaurantInput}, {dataSources}) => {
             return dataSources.restaurantAPI.insertRestaurant(restaurantInput);
-        },
-        insertRestaurantItem: async (_, {restaurantItemInput}, {dataSources}) => {
+        }),
+        insertRestaurantItem: authenticated(async (_, {restaurantItemInput}, {dataSources}) => {
             return dataSources.restaurantAPI.insertRestaurantItem(restaurantItemInput);
-        },
-        insertOrder: async (_, {orderInput}, {dataSources}) => {
-            return dataSources.orderAPI.insertOrder(orderInput);
-        },
-        insertOrderItem: async (_, {orderItemInput}, {dataSources}) => {
-            return dataSources.orderAPI.insertOrderItem(orderItemInput);
-        }
+        }),
+        insertOrder: authenticated(async (_, {orderInput}, {dataSources, jwt}) => {
+            return dataSources.orderAPI.insertOrder(orderInput, jwt);
+        }),
+        insertOrderItem: authenticated(async (_, {orderItemInput}, {dataSources, jwt}) => {
+            return dataSources.orderAPI.insertOrderItem(orderItemInput, jwt);
+        })
     },
 };

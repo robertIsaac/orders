@@ -15,7 +15,7 @@ const typeDefs = gql`
         ): OrderConnection!
         order(id: ID!): Order
         # Queries for the current user
-        #        me: User
+        me: User
     }
 
     type OrderConnection {
@@ -76,13 +76,8 @@ const typeDefs = gql`
     }
 
     type Mutation {
-        # if false, booking trips failed -- check errors
-        #        bookTrips(launchIds: [ID]!): TripUpdateResponse!
-
-        # if false, cancellation failed -- check errors
-        #        cancelTrip(launchId: ID!): TripUpdateResponse!
-
         login(username: String!, password: String!): String # login token
+        register(username: String!, password: String!, jobTitle: String): String # login token
         insertRestaurant(restaurantInput: RestaurantInput): String # restaurant id
         insertRestaurantItem(restaurantItemInput: RestaurantItemInput): String # item id
         insertOrder(orderInput: OrderInput): String # order id

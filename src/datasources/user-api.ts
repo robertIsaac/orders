@@ -14,26 +14,10 @@ export class UserAPI {
         return hash === originalHash;
     }
 
-    async auth(req) {
-        const {JWT_SECRET, JWT_EXP} = this.env;
-        let token;
-        if (req.headers.authorization) {
-            token = req.headers.authorization.replace('Bearer ', '');
-        } else {
-            return null;
-        }
-        let jwtBody;
-        try {
-            jwtBody = jwt.verify(token, JWT_SECRET, {expiresIn: JWT_EXP});
-        } catch (e) {
-            console.error(e);
-            return null;
-        }
-        const user = UserModel.findById(jwtBody.id);
-        if (!user) {
-            return null;
-        }
-        return jwtBody;
+    protected static hashPassword(password) {
+        const salt = crypto.randomBytes(16).toString('hex');
+        const hash = crypto.pbkdf2Sync(password, salt, 2048, 32, 'sha512').toString('hex');
+        return [salt, hash].join('$');
     }
 
     async getUser(userId: string) {
@@ -61,5 +45,39 @@ export class UserAPI {
             id: user._id,
             username: user.username,
         }, JWT_SECRET, {expiresIn: JWT_EXP});
+    }
+
+    async auth(req) {
+        const {JWT_SECRET, JWT_EXP} = this.env;
+        let token;
+        if (req.headers.authorization) {
+            token = req.headers.authorization.replace('Bearer ', '');
+        } else {
+            return null;
+        }
+        let jwtBody;
+        try {
+            jwtBody = jwt.verify(token, JWT_SECRET, {expiresIn: JWT_EXP});
+        } catch (e) {
+            console.error(e);
+            return null;
+        }
+        const user = await UserModel.findById(jwtBody.id);
+        if (!user) {
+            return null;
+        }
+        return jwtBody;
+    }
+
+    async register(username, password, jobTitle) {
+        const hashedPassword = UserAPI.hashPassword(password);
+        const user: User = {
+            username,
+            jobTitle,
+            password: hashedPassword,
+        };
+        const newUser = new UserModel(user);
+        const createdUser = await newUser.save();
+        return this.getJWTToken(createdUser);
     }
 }

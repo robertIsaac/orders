@@ -54,7 +54,7 @@ export class OrderAPI {
         return order;
     }
 
-    async insertOrder(orderInput) {
+    async insertOrder(orderInput, jwt) {
         const restaurant = await this.restaurantAPI.getRestaurant(orderInput.restaurantId);
         if (!restaurant) {
             return null;
@@ -62,7 +62,7 @@ export class OrderAPI {
         const total = restaurant.delivery * (restaurant.tax / 100 + 1);
         const order: Order = {
             restaurantId: orderInput.restaurantId,
-            userId: '5cf137d585dd966d28a798d5',
+            userId: jwt.id,
             delivery: restaurant.delivery,
             tax: restaurant.tax,
             status: 'new',
@@ -74,7 +74,7 @@ export class OrderAPI {
         return newOrder._id;
     }
 
-    async insertOrderItem(orderItemInput) {
+    async insertOrderItem(orderItemInput, jwt) {
         const item = await this.restaurantAPI.getRestaurantItem(orderItemInput.restaurantItemId);
         if (!item) {
             return null;
@@ -86,7 +86,7 @@ export class OrderAPI {
         const orderItem: OrderItem = {
             itemId: item._id,
             price: item.price,
-            userId: '5cf137d585dd966d28a798d5',
+            userId: jwt.id,
             orderId: orderItemInput.orderId,
             quantity: orderItemInput.quantity,
         };
