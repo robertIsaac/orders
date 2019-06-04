@@ -17,7 +17,7 @@ import { UserAPI } from "./datasources/user-api";
 
 const {ApolloServer} = require('apollo-server-express');
 const typeDefs = require('./schema');
-const resolvers = require('./resolvers');
+const resolvers = require('./resolvers/resolvers');
 
 const app = express();
 
