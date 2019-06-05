@@ -1,7 +1,7 @@
-import {bool, cleanEnv, num, port, str} from 'envalid';
+import { bool, cleanEnv, num, port, str } from 'envalid';
 
 function validateEnv() {
-    cleanEnv(process.env, {
+    return cleanEnv(process.env, {
         MONGO_PASSWORD: str(),
         MONGO_PATH: str(),
         MONGO_USER: str(),

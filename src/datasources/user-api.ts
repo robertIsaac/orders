@@ -1,11 +1,12 @@
 import UserModel from "../model/user.model";
 import * as crypto from "crypto";
 import { User } from "../interfaces/user.interface";
+import validateEnv from "../utils/validateEnv";
 
 const jwt = require('jsonwebtoken');
 
 export class UserAPI {
-    private env = process.env;
+    private env = validateEnv();
 
     protected static verifyHash(password, original) {
         const originalHash = original.split('$')[1];

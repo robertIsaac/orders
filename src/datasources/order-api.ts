@@ -54,10 +54,13 @@ export class OrderAPI {
         return order;
     }
 
-    async insertOrder(orderInput, jwt) {
+    async insertOrder(orderInput, jwt): Promise<InsertResponse> {
         const restaurant = await this.restaurantAPI.getRestaurant(orderInput.restaurantId);
         if (!restaurant) {
-            return null;
+            return {
+                success: false,
+                message: `can't find a restaurant with id ${orderInput.restaurantId}`
+            };
         }
         const total = restaurant.delivery * (restaurant.tax / 100 + 1);
         const order: Order = {
@@ -70,18 +73,34 @@ export class OrderAPI {
             time: new Date,
             total
         };
-        const newOrder = await new OrderModel(order).save();
-        return newOrder._id;
+        try {
+            const newOrder = await new OrderModel(order).save();
+            return {
+                success: true,
+                insertedId: newOrder._id
+            };
+        } catch (e) {
+            return {
+                success: false,
+                message: e.name
+            };
+        }
     }
 
-    async insertOrderItem(orderItemInput, jwt) {
+    async insertOrderItem(orderItemInput, jwt): Promise<InsertResponse> {
         const item = await this.restaurantAPI.getRestaurantItem(orderItemInput.restaurantItemId);
         if (!item) {
-            return null;
+            return {
+                success: false,
+                message: `can't find a restaurant with id ${orderItemInput.restaurantItemId}`
+            };
         }
         const order = await this.getOrder(orderItemInput.orderId);
         if (!order) {
-            return null;
+            return {
+                success: false,
+                message: `can't find an order with id ${orderItemInput.orderId}`
+            };
         }
         const orderItem: OrderItem = {
             itemId: item._id,
@@ -90,7 +109,17 @@ export class OrderAPI {
             orderId: orderItemInput.orderId,
             quantity: orderItemInput.quantity,
         };
-        const newOrderItem = await new OrderItemModel(orderItem).save();
-        return newOrderItem._id;
+        try {
+            const newOrderItem = await new OrderItemModel(orderItem).save();
+            return {
+                success: true,
+                insertedId: newOrderItem._id
+            };
+        } catch (e) {
+            return {
+                success: false,
+                message: e.name
+            };
+        }
     }
 }

@@ -54,8 +54,7 @@ const {
     MONGO_PASSWORD,
     MONGO_PATH,
 } = process.env;
-validateEnv();
-app.set('env', process.env);
+app.set('env', validateEnv());
 app.use(CORS);
 mongoose.set('useCreateIndex', true);
 let mongoCredentials = '';

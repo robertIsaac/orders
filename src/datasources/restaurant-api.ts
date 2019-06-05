@@ -37,7 +37,7 @@ export class RestaurantAPI {
         return item;
     }
 
-    async insertRestaurant(restaurantInput) {
+    async insertRestaurant(restaurantInput): Promise<InsertResponse> {
         const restaurant: Restaurant = {
             name: restaurantInput.name,
             phone: restaurantInput.phone,
@@ -47,22 +47,45 @@ export class RestaurantAPI {
         if (restaurantInput.menu) {
             restaurant['menu'] = restaurantInput.menu;
         }
-        const newRestaurant = await new RestaurantModel(restaurant).save();
-        return newRestaurant._id;
+        try {
+            const newRestaurant = await new RestaurantModel(restaurant).save();
+            return {
+                success: true,
+                insertedId: newRestaurant._id
+            };
+        } catch (e) {
+            return {
+                success: false,
+                message: e.name
+            };
+        }
     }
 
-    async insertRestaurantItem(restaurantInput) {
+    async insertRestaurantItem(restaurantInput): Promise<InsertResponse> {
         const restaurant = await this.getRestaurant(restaurantInput.restaurantId);
         if (!restaurant) {
-            return null;
+            return {
+                success: false,
+                message: `can't find a restaurant with id ${restaurantInput.restaurantId}`
+            };
         }
         const item: Item = {
             restaurantId: restaurantInput.restaurantId,
             name: restaurantInput.name,
             price: restaurantInput.price,
         };
-        const newItem = await new ItemModel(item).save();
-        return newItem._id;
+        try {
+            const newItem = await new ItemModel(item).save();
+            return {
+                success: true,
+                insertedId: newItem._id
+            };
+        } catch (e) {
+            return {
+                success: false,
+                message: e.name
+            };
+        }
     }
 
     async getRestaurantItem(restaurantItemId: string) {

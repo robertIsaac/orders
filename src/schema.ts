@@ -78,10 +78,10 @@ const typeDefs = gql`
     type Mutation {
         login(username: String!, password: String!): String # login token
         register(username: String!, password: String!, jobTitle: String): String # login token
-        insertRestaurant(restaurantInput: RestaurantInput): String # restaurant id
-        insertRestaurantItem(restaurantItemInput: RestaurantItemInput): String # item id
-        insertOrder(orderInput: OrderInput): String # order id
-        insertOrderItem(orderItemInput: OrderItemInput): String # order item id
+        insertRestaurant(restaurantInput: RestaurantInput): InsertResponse # restaurant id
+        insertRestaurantItem(restaurantItemInput: RestaurantItemInput): InsertResponse # item id
+        insertOrder(orderInput: OrderInput): InsertResponse # order id
+        insertOrderItem(orderItemInput: OrderItemInput): InsertResponse # order item id
     }
 
     input RestaurantInput {
@@ -106,6 +106,12 @@ const typeDefs = gql`
         orderId: ID!
         restaurantItemId: ID!
         quantity: Int!
+    }
+
+    type InsertResponse {
+        success: Boolean!
+        insertedId: String
+        message: String
     }
 `;
 module.exports = typeDefs;
