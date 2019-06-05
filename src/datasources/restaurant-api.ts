@@ -3,6 +3,8 @@ import ItemModel from "../model/item.model";
 import { Restaurant } from "../interfaces/restaurant.interface";
 import { Item } from "../interfaces/item.interface";
 
+const mongoose = require('mongoose');
+
 export class RestaurantAPI {
     async getAllRestaurants() {
         const restaurants = await RestaurantModel.find();
@@ -62,6 +64,12 @@ export class RestaurantAPI {
     }
 
     async insertRestaurantItem(restaurantInput): Promise<InsertResponse> {
+        if (!mongoose.Types.ObjectId.isValid(restaurantInput.restaurantId)) {
+            return {
+                success: false,
+                message: `invalid restaurant id ${restaurantInput.restaurantId}`
+            };
+        }
         const restaurant = await this.getRestaurant(restaurantInput.restaurantId);
         if (!restaurant) {
             return {

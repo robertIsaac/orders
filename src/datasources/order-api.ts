@@ -5,6 +5,8 @@ import { RestaurantAPI } from "./restaurant-api";
 import { UserAPI } from "./user-api";
 import { OrderItem } from "../interfaces/order-item.interface";
 
+const mongoose = require('mongoose');
+
 export class OrderAPI {
     restaurantAPI: RestaurantAPI = new RestaurantAPI();
     userAPI: UserAPI = new UserAPI();
@@ -55,6 +57,12 @@ export class OrderAPI {
     }
 
     async insertOrder(orderInput, jwt): Promise<InsertResponse> {
+        if (!mongoose.Types.ObjectId.isValid(orderInput.restaurantId)) {
+            return {
+                success: false,
+                message: `invalid restaurant id ${orderInput.restaurantId}`
+            };
+        }
         const restaurant = await this.restaurantAPI.getRestaurant(orderInput.restaurantId);
         if (!restaurant) {
             return {
@@ -88,6 +96,18 @@ export class OrderAPI {
     }
 
     async insertOrderItem(orderItemInput, jwt): Promise<InsertResponse> {
+        if (!mongoose.Types.ObjectId.isValid(orderItemInput.restaurantItemId)) {
+            return {
+                success: false,
+                message: `invalid restaurant id ${orderItemInput.restaurantItemId}`
+            };
+        }
+        if (!mongoose.Types.ObjectId.isValid(orderItemInput.restaurantItemId)) {
+            return {
+                success: false,
+                message: `invalid item id ${orderItemInput.restaurantItemId}`
+            };
+        }
         const item = await this.restaurantAPI.getRestaurantItem(orderItemInput.restaurantItemId);
         if (!item) {
             return {
