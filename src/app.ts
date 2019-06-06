@@ -9,10 +9,39 @@ import restaurantsRouter from "./routes/restaurants";
 import 'dotenv/config';
 import validateEnv from './utils/validateEnv';
 import mongoose from 'mongoose';
-import {jwtMiddleware} from "./middlewares/jwt";
-import {CORS} from "./utils/cors";
+import { jwtMiddleware } from "./middlewares/jwt";
+import { CORS } from "./utils/cors";
+import { RestaurantAPI } from "./datasources/restaurant-api";
+import { OrderAPI } from "./datasources/order-api";
+import { UserAPI } from "./datasources/user-api";
+
+const {ApolloServer} = require('apollo-server-express');
+const typeDefs = require('./schema');
+const resolvers = require('./resolvers/resolvers');
 
 const app = express();
+
+// graphql
+const userAPI = new UserAPI();
+const server = new ApolloServer({
+    context: async ({req}) => {
+        const jwt = await userAPI.auth(req);
+        if (!jwt) {
+            return null;
+        }
+        return {jwt};
+    },
+    typeDefs,
+    resolvers,
+    dataSources: () => ({
+        restaurantAPI: new RestaurantAPI(),
+        orderAPI: new OrderAPI(),
+        userAPI,
+    }),
+    introspection: true,
+    playground: true,
+});
+server.applyMiddleware({app});
 
 app.use(logger("dev"));
 app.use(express.json());
@@ -25,8 +54,7 @@ const {
     MONGO_PASSWORD,
     MONGO_PATH,
 } = process.env;
-validateEnv();
-app.set('env', process.env);
+app.set('env', validateEnv());
 app.use(CORS);
 mongoose.set('useCreateIndex', true);
 let mongoCredentials = '';
