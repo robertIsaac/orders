@@ -11,7 +11,7 @@ export interface Order {
     delivery: number;
     tax: number;
     time: Date;
-    tip?: number;
+    tip: number;
     items?: OrderItem[];
     user?: User;
     restaurant?: any;

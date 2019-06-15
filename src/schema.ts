@@ -76,12 +76,13 @@ const typeDefs = gql`
     }
 
     type Mutation {
-        login(username: String!, password: String!): AuthResponse # login token
-        register(username: String!, password: String!, jobTitle: String): AuthResponse # login token
-        insertRestaurant(restaurantInput: RestaurantInput): InsertResponse # restaurant id
-        insertRestaurantItem(restaurantItemInput: RestaurantItemInput): InsertResponse # item id
-        insertOrder(orderInput: OrderInput): InsertResponse # order id
-        insertOrderItem(orderItemInput: OrderItemInput): InsertResponse # order item id
+        login(username: String!, password: String!): AuthResponse
+        register(username: String!, password: String!, jobTitle: String): AuthResponse
+        insertRestaurant(restaurantInput: RestaurantInput): InsertResponse
+        insertRestaurantItem(restaurantItemInput: RestaurantItemInput): InsertResponse
+        insertOrder(orderInput: OrderInput): InsertResponse
+        insertOrderItem(orderItemInput: OrderItemInput): InsertResponse
+        updateOrder(updateOrderInput: UpdateOrderInput): UpdateResponse
     }
 
     input RestaurantInput {
@@ -108,9 +109,20 @@ const typeDefs = gql`
         quantity: Int!
     }
 
+    input UpdateOrderInput {
+        orderId: ID!
+        status: String!
+        tip: Float!
+    }
+
     type InsertResponse {
         success: Boolean!
         insertedId: String
+        message: String
+    }
+
+    type UpdateResponse {
+        success: Boolean!
         message: String
     }
 

@@ -31,6 +31,9 @@ module.exports = {
         }),
         insertOrderItem: authenticated(async (_, {orderItemInput}, {dataSources, jwt}) => {
             return dataSources.orderAPI.insertOrderItem(orderItemInput, jwt);
-        })
+        }),
+        updateOrder: authenticated(async (_, {updateOrderInput}, {dataSources}) => {
+            return dataSources.orderAPI.updateOrder(updateOrderInput);
+        }),
     }
 };

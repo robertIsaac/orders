@@ -78,6 +78,7 @@ export class OrderAPI {
             tax: restaurant.tax,
             status: 'new',
             subtotal: 0,
+            tip: 0,
             time: new Date,
             total
         };
@@ -141,6 +142,38 @@ export class OrderAPI {
                 insertedId: newOrderItem._id
             };
         } catch (e) {
+            return {
+                success: false,
+                message: e.name
+            };
+        }
+    }
+
+    async updateOrder(updateOrderInput): Promise<Partial<InsertResponse>> {
+        const order = await this.getOrder(updateOrderInput.orderId);
+        if (!order) {
+            return {
+                success: false,
+                message: `can't find an order with id ${updateOrderInput.orderId}`
+            };
+        }
+        const editOrder: Partial<Order> = {
+            status: updateOrderInput.status,
+            tip: updateOrderInput.tip
+        };
+        if (!order.tip) {
+            order.tip = 0;
+        }
+        editOrder.total = order.total - +order.tip + updateOrderInput.tip;
+        console.log(editOrder);
+        try {
+            const a = await OrderModel.updateOne({_id: updateOrderInput.orderId}, editOrder);
+            console.log(a);
+            return {
+                success: true
+            }
+        } catch (e) {
+            console.error(e);
             return {
                 success: false,
                 message: e.name
