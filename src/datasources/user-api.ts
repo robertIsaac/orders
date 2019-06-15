@@ -29,15 +29,24 @@ export class UserAPI {
         return user;
     }
 
-    async login(username, password) {
+    async login(username, password): Promise<AuthResponse> {
         const user = await UserModel.findOne({username}).select('+password');
         if (!user) {
-            return null;
+            return {
+                success: false,
+                message: `username or password is not valid`
+            };
         }
         if (!UserAPI.verifyHash(password, user.password)) {
-            return null;
+            return {
+                success: false,
+                message: `username or password is not valid`
+            };
         }
-        return this.getJWTToken(user);
+        return {
+            success: true,
+            token: this.getJWTToken(user)
+        };
     }
 
     protected getJWTToken(user: User) {
@@ -71,6 +80,13 @@ export class UserAPI {
     }
 
     async register(username, password, jobTitle) {
+        const currentUser = await UserModel.findOne({username});
+        if (currentUser) {
+            return {
+                success: false,
+                message: `username ${username} already exits`
+            }
+        }
         const hashedPassword = UserAPI.hashPassword(password);
         const user: User = {
             username,
@@ -79,6 +95,9 @@ export class UserAPI {
         };
         const newUser = new UserModel(user);
         const createdUser = await newUser.save();
-        return this.getJWTToken(createdUser);
+        return {
+            success: true,
+            token: this.getJWTToken(createdUser)
+        };
     }
 }

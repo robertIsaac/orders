@@ -76,8 +76,8 @@ const typeDefs = gql`
     }
 
     type Mutation {
-        login(username: String!, password: String!): String # login token
-        register(username: String!, password: String!, jobTitle: String): String # login token
+        login(username: String!, password: String!): AuthResponse # login token
+        register(username: String!, password: String!, jobTitle: String): AuthResponse # login token
         insertRestaurant(restaurantInput: RestaurantInput): InsertResponse # restaurant id
         insertRestaurantItem(restaurantItemInput: RestaurantItemInput): InsertResponse # item id
         insertOrder(orderInput: OrderInput): InsertResponse # order id
@@ -111,6 +111,12 @@ const typeDefs = gql`
     type InsertResponse {
         success: Boolean!
         insertedId: String
+        message: String
+    }
+
+    type AuthResponse {
+        success: Boolean!
+        token: String
         message: String
     }
 `;
