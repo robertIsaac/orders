@@ -131,6 +131,11 @@ export class OrderAPI {
         };
         try {
             const newOrderItem = await new OrderItemModel(orderItem).save();
+            const editOrder: Partial<Order> = {
+                subtotal: order.subtotal + orderItem.price,
+                total: order.total + orderItem.price * (1 + order.tax / 100)
+            };
+            await OrderModel.updateOne({_id: orderItemInput.orderId}, editOrder);
             return {
                 success: true,
                 insertedId: newOrderItem._id
