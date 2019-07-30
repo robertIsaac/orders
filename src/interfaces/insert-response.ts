@@ -1,4 +1,4 @@
-type InsertResponse = FalseResponse | TrueResponse;
+export type InsertResponse = FalseResponse | TrueResponse;
 
 interface FalseResponse {
     success: false;

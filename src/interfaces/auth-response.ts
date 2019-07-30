@@ -1,11 +1,11 @@
-type AuthResponse = FalseResponse | AuthTrueResponse;
+export type AuthResponse = FalseResponse | TrueResponse;
 
 interface FalseResponse {
     success: false;
     message: string;
 }
 
-interface AuthTrueResponse {
+interface TrueResponse {
     success: true;
     token: string;
 }

@@ -2,6 +2,7 @@ import RestaurantModel from "../model/restaurant.model";
 import ItemModel from "../model/item.model";
 import { Restaurant } from "../interfaces/restaurant.interface";
 import { Item } from "../interfaces/item.interface";
+import { InsertResponse } from "../interfaces/insert-response";
 
 const mongoose = require('mongoose');
 

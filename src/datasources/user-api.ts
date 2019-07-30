@@ -2,6 +2,7 @@ import UserModel from "../model/user.model";
 import * as crypto from "crypto";
 import { User } from "../interfaces/user.interface";
 import validateEnv from "../utils/validateEnv";
+import { AuthResponse } from "../interfaces/auth-response";
 
 const jwt = require('jsonwebtoken');
 

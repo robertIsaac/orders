@@ -4,6 +4,7 @@ import OrderItemModel from "../model/order-item.model";
 import { RestaurantAPI } from "./restaurant-api";
 import { UserAPI } from "./user-api";
 import { OrderItem } from "../interfaces/order-item.interface";
+import { InsertResponse } from "../interfaces/insert-response";
 
 const mongoose = require('mongoose');
 
@@ -165,7 +166,6 @@ export class OrderAPI {
             order.tip = 0;
         }
         editOrder.total = order.total - +order.tip + updateOrderInput.tip;
-        console.log(editOrder);
         try {
             const a = await OrderModel.updateOne({_id: updateOrderInput.orderId}, editOrder);
             console.log(a);
