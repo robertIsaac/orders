@@ -1,19 +1,19 @@
 import express = require("express");
-import {Restaurant} from "../interfaces/restaurant.interface";
-import RestaurantModel from "../model/restaurant.model";
-import {Item} from "../interfaces/item.interface";
+import { Item } from "../interfaces/item.interface";
+import { Restaurant } from "../interfaces/restaurant.interface";
 import ItemModel from "../model/item.model";
+import RestaurantModel from "../model/restaurant.model";
 
 const router = express.Router();
 
 /**
  * return all the restaurants
- * */
+ */
 router.get("/", (req, res, next) => {
-    RestaurantModel.find().then(restaurants => {
+    RestaurantModel.find().then((restaurants) => {
         res.send(restaurants);
         next();
-    })
+    });
 });
 
 /**
@@ -23,47 +23,47 @@ router.get("/", (req, res, next) => {
  * @param delivery {number} the delivery fees of this restaurant
  * @param tax {number} the tax of this restaurant in percentage
  * @return {string} the id of the new created restaurant
- * */
+ */
 router.post("/", (req, res, next) => {
     const restaurant: Restaurant = {
+        delivery: req.body.delivery,
         name: req.body.name,
         phone: req.body.phone,
-        delivery: req.body.delivery,
         tax: req.body.tax,
     };
     if (req.body.menu) {
-        restaurant['menu'] = req.body.menu;
+        restaurant.menu = req.body.menu;
     }
     new RestaurantModel(restaurant).save().then((newRestaurant: Restaurant) => {
         res.status(201).json({id: newRestaurant._id});
         next();
-    }).catch(error => {
+    }).catch((error) => {
         console.error(error);
-        res.status(400).send('bad request');
+        res.status(400).send("bad request");
         next();
     });
 });
 
 /**
  * return all the restaurant's items
- * */
+ */
 router.get("/:restaurantId/items/", (req, res, next) => {
     const {restaurantId} = req.params;
-    RestaurantModel.findById(restaurantId).then(restaurant => {
+    RestaurantModel.findById(restaurantId).then((restaurant) => {
         if (!restaurant) {
             res.status(400).send({message: `no restaurant found with id ${restaurantId}`});
             next();
             return;
         }
-        ItemModel.find({restaurantId: restaurantId}).then(items => {
+        ItemModel.find({restaurantId}).then((items) => {
             res.send(items);
             next();
-        }).catch(error => {
+        }).catch((error) => {
             console.error(error);
             res.status(500).send({message: `internal server error`});
             next();
         });
-    }).catch(error => {
+    }).catch((error) => {
         console.error(error);
         res.status(400).send({message: `no restaurant found with id ${restaurantId}`});
         next();
@@ -80,9 +80,9 @@ router.post("/:restaurantId/items/", (req, res, next) => {
     new ItemModel(item).save().then((newItem: Item) => {
         res.status(201).json({id: newItem._id});
         next();
-    }).catch(error => {
+    }).catch((error) => {
         console.error(error);
-        res.status(400).send('bad request');
+        res.status(400).send("bad request");
         next();
     });
 });
