@@ -1,4 +1,5 @@
 export function CORS(req, res, next) {
+    console.log(req.app.get('env').PRODUCTION);
     if (req.app.get('env').PRODUCTION === 'false') {
         res.header("Access-Control-Allow-Origin", "*");
         res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS,PATCH");
