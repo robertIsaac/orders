@@ -1,4 +1,4 @@
 .idea
 build
 *.env
-/node_modules
+/mode_modules
