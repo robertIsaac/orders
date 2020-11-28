@@ -2,18 +2,18 @@ import cookieParser = require("cookie-parser");
 import express = require("express");
 import logger = require("morgan");
 import path = require("path");
+import 'dotenv/config';
+import mongoose from 'mongoose';
+import { OrderAPI } from "./datasources/order-api";
+import { RestaurantAPI } from "./datasources/restaurant-api";
+import { UserAPI } from "./datasources/user-api";
+import { jwtMiddleware } from "./middlewares/jwt";
 import indexRouter from "./routes";
-import usersRouter from "./routes/users";
 import ordersRouter from "./routes/orders";
 import restaurantsRouter from "./routes/restaurants";
-import 'dotenv/config';
-import validateEnv from './utils/validateEnv';
-import mongoose from 'mongoose';
-import { jwtMiddleware } from "./middlewares/jwt";
+import usersRouter from "./routes/users";
 import { CORS } from "./utils/cors";
-import { RestaurantAPI } from "./datasources/restaurant-api";
-import { OrderAPI } from "./datasources/order-api";
-import { UserAPI } from "./datasources/user-api";
+import validateEnv from './utils/validateEnv';
 
 const {ApolloServer} = require('apollo-server-express');
 const typeDefs = require('./schema');
@@ -61,7 +61,7 @@ let mongoCredentials = '';
 if (MONGO_USER && MONGO_PASSWORD) {
     mongoCredentials = `${MONGO_USER}:${MONGO_PASSWORD}`;
 }
-mongoose.connect(`mongodb://${mongoCredentials}${MONGO_PATH}`, {useNewUrlParser: true});
+mongoose.connect(`mongodb+srv://${mongoCredentials}${MONGO_PATH}`, {useNewUrlParser: true});
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
